@@ -1,0 +1,22 @@
+# Simulation files
+*.wlf
+*.vcd
+*.log
+*.jou
+*.pb
+*.str
+
+# Tool generated folders
+work/
+transcript/
+xsim.dir/
+simv/
+csrc/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.bak
