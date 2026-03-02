@@ -146,53 +146,61 @@ module sync_fifo_tb();
     task run_test;
         integer i;
         begin
-
+    
             // Write some
             for (i = 0; i < 5; i=i+1) begin
                 @(posedge clk);
                 wr_en = 1; rd_en = 0;
                 wr_data = i;
             end
-
+    
             // Read some
             for (i = 0; i < 3; i=i+1) begin
                 @(posedge clk);
                 wr_en = 0; rd_en = 1;
             end
-
-            // Simultaneous read abd write
+    
+            // Simultaneous read and write (mid-occupancy)
             for (i = 0; i < 5; i=i+1) begin
                 @(posedge clk);
                 wr_en = 1; rd_en = 1;
                 wr_data = i + 20;
             end
-
+    
             // Fill completely
             while (!full) begin
                 @(posedge clk);
                 wr_en = 1; rd_en = 0;
                 wr_data = $random;
             end
-
-            // illegal write
+    
+            // Try illegal write at FULL
             @(posedge clk);
             wr_en = 1; rd_en = 0;
-
+    
             // Drain completely
             while (!empty) begin
                 @(posedge clk);
                 wr_en = 0; rd_en = 1;
             end
-
-            // illegal read
+    
+            // Try illegal read at EMPTY
             @(posedge clk);
             wr_en = 0; rd_en = 1;
-
+    
+            // Simultaneous read/write at EMPTY (bypass case)
+            repeat (5) begin
+                @(posedge clk);
+                wr_en = 1;
+                rd_en = 1;
+                wr_data = $random;
+            end
+    
             @(posedge clk);
-            wr_en = 0; rd_en = 0;
-
+            wr_en = 0; 
+            rd_en = 0;
+    
         end
     endtask
 
 endmodule
-    
